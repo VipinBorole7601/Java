@@ -12,6 +12,6 @@ Then Start Writing the Java Programs:
 
 Topics:
 
-1 Basic
-2 Advance
-3 DSA
+1 Basic : cover this using hand written notes
+2 Advance : coverd using coding dsa problems
+3 DSA : low to advance dsa
