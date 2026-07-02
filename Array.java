@@ -1,8 +1,7 @@
 import java.util.Arrays;
 
 public class Array {
-   public Array() {
-   }
+
 
    public void waysToPrintNumericArray() {
       int[] var1 = new int[]{5, 6, 1};
