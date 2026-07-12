@@ -1,0 +1,246 @@
+Java Selenium + TestNG Automation Framework Plan (From Scratch)
+Repository: Git-based workflow
+Build Tool: Maven
+CI/CD: GitHub Actions (primary), adaptable to Jenkins/GitLab CI
+
+1) Goal
+- Build a scalable UI test automation framework using Selenium + TestNG with clear layers:
+  test data -> test cases -> page objects -> reusable utilities -> reporting -> CI/CD.
+- Support local execution, PR validation, nightly regression, and release-quality reporting.
+
+2) Recommended Tech Stack
+- Java: 17
+- Build: Maven
+- Test runner: TestNG
+- UI automation: Selenium WebDriver 4.x
+- WebDriver binaries: WebDriverManager
+- Logging: SLF4J + Logback
+- Assertions: TestNG Assert (optionally AssertJ)
+- Reporting: Allure + Surefire reports
+- Config: .properties + environment variables
+- Optional API layer: RestAssured
+- Optional retry and flaky handling: IRetryAnalyzer + rerun suite
+
+3) Target Project Structure
+java-selenium-testng-framework/
+|-- pom.xml
+|-- .gitignore
+|-- README.md
+|-- testng.xml
+|-- testng-smoke.xml
+|-- testng-regression.xml
+|-- config/
+|   |-- config.properties
+|   |-- config-qa.properties
+|   `-- config-uat.properties
+|-- src/
+|   |-- main/
+|   |   `-- java/
+|   |       `-- com/company/framework/
+|   |           |-- core/
+|   |           |   |-- DriverFactory.java
+|   |           |   |-- BaseTest.java
+|   |           |   `-- TestListener.java
+|   |           |-- config/
+|   |           |   `-- ConfigManager.java
+|   |           |-- pages/
+|   |           |   |-- BasePage.java
+|   |           |   `-- (feature pages)
+|   |           |-- utils/
+|   |           |   |-- WaitUtils.java
+|   |           |   |-- ScreenshotUtils.java
+|   |           |   `-- DataUtils.java
+|   |           `-- constants/
+|   |               `-- FrameworkConstants.java
+|   `-- test/
+|       |-- java/
+|       |   `-- com/company/tests/
+|       |       |-- smoke/
+|       |       |-- regression/
+|       |       `-- e2e/
+|       `-- resources/
+|           |-- testdata/
+|           |   |-- users.json
+|           |   `-- products.csv
+|           `-- logback-test.xml
+|-- reports/
+|   `-- (generated, ignored in git)
+`-- .github/
+    `-- workflows/
+        |-- pr-validation.yml
+        |-- nightly-regression.yml
+        `-- release.yml
+
+4) Branching + Git Strategy
+- Branch model:
+  - main: production-ready
+  - develop: integration branch
+  - feature/*: feature or test case implementation
+  - hotfix/*: urgent fixes
+- Commit style:
+  - feat:, fix:, test:, chore:, ci:
+- Pull Request rules:
+  - At least 1 approval
+  - CI checks mandatory (compile + smoke suite)
+  - No direct push to main
+- Tags:
+  - vX.Y.Z for framework releases
+
+5) Maven Dependencies and Plugins (Baseline)
+- Dependencies:
+  - selenium-java
+  - testng
+  - webdrivermanager
+  - slf4j-api + logback-classic
+  - allure-testng
+  - jackson-databind (if JSON test data)
+- Plugins:
+  - maven-surefire-plugin (suite execution, parallel config)
+  - maven-compiler-plugin (Java 17)
+  - allure-maven
+  - maven-failsafe-plugin (if separating integration/e2e)
+
+6) Framework Design Standards
+- Page Object Model:
+  - Keep locators and page actions in page classes
+  - No direct driver operations in test classes
+- BaseTest:
+  - setup/teardown
+  - browser and environment handling
+  - thread-safe driver with ThreadLocal
+- Wait strategy:
+  - explicit waits only; avoid hard sleeps
+- Config strategy:
+  - priority: CLI param > environment variable > properties file
+- Test data strategy:
+  - externalized data files (JSON/CSV) under src/test/resources/testdata
+- Parallel run:
+  - method/class level based on suite needs
+  - each thread uses isolated driver instance
+
+7) Test Suite Strategy
+- Smoke suite:
+  - critical user journeys
+  - runs on each PR
+- Regression suite:
+  - broader functional coverage
+  - nightly
+- E2E suite:
+  - full business flows
+  - pre-release or scheduled
+- Include test grouping in TestNG:
+  - groups = smoke, regression, e2e, sanity
+
+8) CI/CD Blueprint (GitHub Actions)
+A) PR Validation Pipeline (pr-validation.yml)
+- Trigger: pull_request to develop/main
+- Jobs:
+  1. checkout
+  2. setup-java (Temurin 17)
+  3. cache maven repository
+  4. mvn clean test -DsuiteXmlFile=testng-smoke.xml
+  5. publish Surefire + Allure artifacts
+- Gate:
+  - PR cannot merge if pipeline fails
+
+B) Nightly Regression Pipeline (nightly-regression.yml)
+- Trigger: schedule (cron, e.g., daily 1 AM)
+- Jobs:
+  1. checkout
+  2. setup-java + cache
+  3. run regression suite
+     mvn clean test -DsuiteXmlFile=testng-regression.xml -Denvironment=qa
+  4. upload reports/artifacts
+  5. notification to Slack/Teams/Email
+
+C) Release Pipeline (release.yml)
+- Trigger: push tag v*
+- Jobs:
+  1. run smoke + critical regression
+  2. package framework artifacts (if needed)
+  3. publish release notes and test evidence
+  4. mark deployment readiness
+
+9) Sample GitHub Actions Job Skeleton
+- Java setup:
+  uses: actions/setup-java@v4
+  with:
+    distribution: temurin
+    java-version: '17'
+- Execute:
+  run: mvn -B clean test -DsuiteXmlFile=testng-smoke.xml
+- Artifacts:
+  - target/surefire-reports
+  - allure-results
+
+10) Secrets and Environment Management
+- Store secrets in GitHub Actions Secrets:
+  - APP_USERNAME, APP_PASSWORD, BASE_URL, API_TOKEN
+- Never commit credentials in code or properties files
+- Use environment-specific config files without secrets
+
+11) Quality Gates and Governance
+- Mandatory CI status checks on PR
+- Retry policy only for known transient issues
+- Flaky tests tracked with ownership and SLA
+- Execution trend dashboard:
+  - pass/fail trend
+  - flaky rate
+  - duration trend
+- Exit criteria:
+  - smoke pass required for merge
+  - regression pass threshold (example: >= 98%) for release
+
+12) Implementation Roadmap (Suggested)
+Phase 1 (Week 1): Foundation
+- Maven setup, dependencies, BaseTest, DriverFactory, ConfigManager
+- Basic logging and sample smoke test
+
+Phase 2 (Week 2): Core Framework
+- Page objects, utilities, data layer, listener, screenshots
+- Group-based suite files
+
+Phase 3 (Week 3): CI/CD + Reporting
+- PR validation workflow
+- nightly regression workflow
+- Allure reporting and artifact retention
+
+Phase 4 (Week 4): Stabilization
+- Parallel run tuning
+- flaky test controls
+- coding standards and contributor guide
+
+13) Definition of Done (DoD)
+- New test mapped to requirement/user story
+- Test added to correct TestNG group
+- Local run pass
+- CI pass with reports generated
+- Page object and utility reuse validated (no duplicate logic)
+- Code reviewed and merged through PR
+
+14) README Content Checklist (for your repo)
+- Framework overview and architecture
+- prerequisites (Java, Maven, browser)
+- local run commands
+- suite run commands (smoke/regression/e2e)
+- environment configuration
+- CI/CD pipeline description
+- report access instructions
+- contribution and branching rules
+
+15) Common Run Commands
+- Run smoke:
+  mvn clean test -DsuiteXmlFile=testng-smoke.xml
+- Run regression on QA:
+  mvn clean test -DsuiteXmlFile=testng-regression.xml -Denvironment=qa
+- Run specific test class:
+  mvn -Dtest=LoginTest test
+
+16) Optional Future Enhancements
+- Selenium Grid / cloud (BrowserStack, Sauce Labs)
+- Dockerized test execution
+- Self-healing locator strategy (controlled usage)
+- API + UI hybrid validations
+- Contract checks before UI runs
+
+End of plan.
