@@ -29,11 +29,8 @@ public class CountUpperCaseAndLowerCaseCharInTheString {
             }
         }
 
-
         System.out.println("Upper case count: " + upperCasecount);
         System.out.println("Lower case count: " + lowerCasecount);
-
-
 
     }
 
