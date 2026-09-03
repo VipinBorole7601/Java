@@ -17,7 +17,6 @@ public class PalindromeNumber {
             n=a%10;
             sum=(sum*10)+n;
             a=a/10;
-
         }
 
         if(temp==sum)
