@@ -12,7 +12,7 @@ public class ArraySwap {
 
   int temp=0;
 
-if(a1.length==a2.length) {
+  if(a1.length==a2.length) {
     for (int i = 0; i <= a1.length - 1; i++) {
 
         temp = a1[i];
