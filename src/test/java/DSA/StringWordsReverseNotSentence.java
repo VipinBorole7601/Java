@@ -5,12 +5,8 @@ public class StringWordsReverseNotSentence {
 
     public static void main(String[] args) {
 
-
         String name ="vipin borole";
-
         String [] aname = name.split(" ");
-
-
 
         for(String n:aname)
         {
@@ -20,10 +16,7 @@ public class StringWordsReverseNotSentence {
                 System.out.print(n.charAt(j));
 
             }
-
             System.out.print(" ");
-
-
         }
 
 
