@@ -7,28 +7,31 @@ import java.util.Map;
 public class DailyPractice {
     public static void main(String[] args) {
 
+   String a = "My name is vipin Borole";
+   char [] r = a.toCharArray();
+   int upperCase=0;
+   int lowerCase=0;
 
-        int a[] = {10,3,1,5,7,90};
-        int max =0;
-        int secondMax=0;
-
-        for(int i=0;i<=a.length-1;i++)
-        {
-            if(max<a[i])
-            {
-                max=a[i];
-            }
-        }
-
-        for(int i = 0; i <= a.length - 1; i++) {
-            if(a[i] != max && secondMax < a[i]) {
-                secondMax = a[i];
-            }
-        }
+   for(int i=0;i<=a.length()-1;i++)
+   {
+       if(Character.isUpperCase(r[i]))
+       {
+           upperCase++;
+       }
+       else if(Character.isLowerCase(r[i])) {
+           lowerCase++;
+       }
 
 
-        System.out.println(max);
-        System.out.println(secondMax);
+
+   }
+
+        System.out.println("uppercase:- "+upperCase);
+        System.out.println("lowercase:- "+lowerCase);
+
+
+
+
 
     }
 }
