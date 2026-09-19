@@ -1,36 +1,34 @@
 package JavaPractice;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DailyPractice {
     public static void main(String[] args) {
 
 
-        int a [] = {22,11,2,5,1,6,16,8};
-        int temp=0;
+        int a[] = {10,3,1,5,7,90};
+        int max =0;
+        int secondMax=0;
 
-        for(int i=0;i<a.length-1;i++)
+        for(int i=0;i<=a.length-1;i++)
         {
-            for(int j=i+1;j<a.length-1;j++)
+            if(max<a[i])
             {
-                if(a[i]>a[j])
-                {
-                    temp=a[i];
-                    a[i]=a[j];
-                    a[j]=temp;
-
-                }
-
-
+                max=a[i];
             }
-            System.out.println("assending order is:-"+a[i]);
+        }
+
+        for(int i = 0; i <= a.length - 1; i++) {
+            if(a[i] != max && secondMax < a[i]) {
+                secondMax = a[i];
+            }
         }
 
 
-
-
+        System.out.println(max);
+        System.out.println(secondMax);
 
     }
-
 }
