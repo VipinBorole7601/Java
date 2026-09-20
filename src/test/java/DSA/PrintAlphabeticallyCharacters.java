@@ -14,9 +14,7 @@ public class PrintAlphabeticallyCharacters {
         TreeSet<Character> d = new TreeSet<>();
         for(char w:a)
         {
-
             d.add(w);
-
         }
         for(char t:d) {
             System.out.println(t);
